@@ -38,12 +38,13 @@ Where:
 
 ## 🏗️ Architecture
 
-ReSilico
-├── Core        # Distributions, sampling, random variables
-├── Domain      # EDP, components, assets, damage states
-├── Analysis    # Demand, damage, loss models
-├── Examples    # End-to-end workflows
-└── Tests       # Unit tests
+    ReSilico/
+    │
+    ├── Core/        # Distributions, sampling, random variables
+    ├── Domain/      # EDP, components, assets, damage states
+    ├── Analysis/    # Demand, damage, loss models
+    ├── Examples/    # End-to-end workflows
+    └── Tests/       # Unit tests
 
 ---
 
