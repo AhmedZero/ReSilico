@@ -186,13 +186,6 @@ MIT License
 
 ---
 
-## 👨‍💻 Author
-
-Ahmed Elsayed Helal Mohammed  
-Zagazig University  
-
----
-
 ## ⭐ Support
 
 If you find this project useful, consider giving it a star ⭐
