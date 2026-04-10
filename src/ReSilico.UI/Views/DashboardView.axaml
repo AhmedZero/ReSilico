@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             x:Class="ReSilico.UI.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <ScrollViewer>
+        <StackPanel Margin="32" Spacing="24">
+
+            <TextBlock Text="Dashboard"
+                       FontSize="28" FontWeight="Bold"
+                       Foreground="#CDD6F4"/>
+
+            <TextBlock Text="{Binding StatusMessage}"
+                       FontSize="14" Foreground="#A6ADC8"/>
+
+            <!-- File IO row -->
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,8">
+                <Button Content="Open Assessment Folder"
+                        Command="{Binding OpenAssessmentCommand}"
+                        Classes="primary"/>
+                <Button Content="Save Assessment"
+                        Command="{Binding SaveAssessmentCommand}"
+                        Background="#313244" Foreground="#CDD6F4"
+                        CornerRadius="6" Padding="12,8" FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <!-- Quick-action cards -->
+            <WrapPanel Orientation="Horizontal" ItemWidth="220">
+
+                <Border Classes="card" Margin="0,0,16,16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Demand Model" Classes="card-title"/>
+                        <TextBlock Text="Define EDP distributions and parameters." Classes="card-body" TextWrapping="Wrap"/>
+                        <Button Content="Open Editor"
+                                Command="{Binding OpenDistributionEditorCommand}"
+                                Classes="primary"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card" Margin="0,0,16,16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Correlation" Classes="card-title"/>
+                        <TextBlock Text="Set inter-EDP correlation structure." Classes="card-body" TextWrapping="Wrap"/>
+                        <Button Content="Open Matrix"
+                                Command="{Binding OpenCorrelationMatrixCommand}"
+                                Classes="primary"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card" Margin="0,0,16,16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Simulation" Classes="card-title"/>
+                        <TextBlock Text="Run Monte Carlo or Latin Hypercube simulation." Classes="card-body" TextWrapping="Wrap"/>
+                        <Button Content="Run"
+                                Command="{Binding OpenSimulationCommand}"
+                                Classes="primary"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card" Margin="0,0,16,16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Results" Classes="card-title"/>
+                        <TextBlock Text="View loss histograms, exceedance curves and statistics." Classes="card-body" TextWrapping="Wrap"/>
+                        <Button Content="View Results"
+                                Command="{Binding OpenResultsCommand}"
+                                Classes="primary"
+                                IsEnabled="{Binding HasResults}"/>
+                    </StackPanel>
+                </Border>
+
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
+
+    <UserControl.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#1E1E2E"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Width" Value="220"/>
+        </Style>
+        <Style Selector="TextBlock.card-title">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+        <Style Selector="TextBlock.card-body">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#A6ADC8"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#89B4FA"/>
+            <Setter Property="Foreground" Value="#1E1E2E"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>

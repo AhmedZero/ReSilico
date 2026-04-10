@@ -2,6 +2,7 @@
 // DemandModel: EDP distribution management with injected ISampler
 
 using Numerics.Distributions;
+using ReSilico.Core.Copulas;
 using ReSilico.Core.Distributions;
 using ReSilico.Core.RandomVariables;
 using ReSilico.Core.Sampling;
@@ -45,6 +46,7 @@ public sealed class DemandModel(ISampler? sampler = null)
 {
     private readonly List<EdpDistributionSpec> _specs = [];
     private double[,]? _correlationMatrix;
+    private ICopula? _copula;
     private RandomVariableRegistry? _registry;
     private readonly ISampler _sampler = sampler ?? LatinHypercubeSampler.Standard;
 
@@ -89,7 +91,7 @@ public sealed class DemandModel(ISampler? sampler = null)
     }
 
     /// <summary>
-    /// Set a Pearson correlation matrix for correlated EDP sampling.
+    /// Set a Pearson correlation matrix for correlated EDP sampling (Gaussian copula).
     /// Must be n×n where n = number of registered EDPs.
     /// </summary>
     public void SetCorrelation(double[,] correlationMatrix)
@@ -99,6 +101,18 @@ public sealed class DemandModel(ISampler? sampler = null)
         if (correlationMatrix.GetLength(0) != n || correlationMatrix.GetLength(1) != n)
             throw new ArgumentException($"Correlation matrix must be {n}×{n}.");
         _correlationMatrix = correlationMatrix;
+        _copula = null; // matrix overrides a previously set copula
+    }
+
+    /// <summary>
+    /// Plug in an explicit copula (e.g. <see cref="TCopula"/>) for correlated EDP sampling.
+    /// Takes precedence over <see cref="SetCorrelation"/> if both are called.
+    /// </summary>
+    public void SetCopula(ICopula copula)
+    {
+        ArgumentNullException.ThrowIfNull(copula);
+        _copula = copula;
+        _correlationMatrix = null; // copula overrides a previously set matrix
     }
 
     // ─── Sample generation ────────────────────────────────────────────────────
@@ -127,10 +141,13 @@ public sealed class DemandModel(ISampler? sampler = null)
                 spec.Edp.Key, dist, spec.TruncLower, spec.TruncUpper));
         }
 
-        if (_correlationMatrix is not null)
+        ICopula? activeCopula = _copula
+            ?? (_correlationMatrix is not null ? new GaussianCopula(_correlationMatrix) : null);
+
+        if (activeCopula is not null)
         {
             var rvList = _specs.Select(s => _registry.Get(s.Edp.Key)).ToList();
-            _registry.RegisterSet(new RandomVariableSet("EDPs", rvList, _correlationMatrix));
+            _registry.RegisterSet(new RandomVariableSet("EDPs", rvList, activeCopula));
         }
 
         _registry.GenerateSample(count, seed);

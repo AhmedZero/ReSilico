@@ -16,7 +16,7 @@ namespace ReSilico.Analysis.Simulation;
 /// Percentile convention: probabilities are in [0,1]
 /// (e.g., 0.84 = 84th percentile) as required by RMC.Numerics Statistics.Percentile.
 /// </summary>
-public sealed class SimulationResult
+public class SimulationResult
 {
     private readonly LossSample _loss;
     private readonly DamageSample _damage;
@@ -143,6 +143,59 @@ public sealed class SimulationResult
             counts[b]++;
         }
         return (edges, counts);
+    }
+
+    /// <summary>
+    /// Mean of the largest fraction of total repair costs (tail-average).
+    /// Example: fraction = 0.01 → average of top 1% largest losses.
+    /// </summary>
+    public double TopKMean(double fraction)
+    {
+        if (fraction <= 0 || fraction > 1)
+            throw new ArgumentOutOfRangeException(nameof(fraction));
+
+        var costs = _loss.TotalCosts;
+        int n = costs.Length;
+
+        int k = Math.Max(1, (int)(fraction * n));
+
+        // clone to avoid mutating original samples
+        var copy = (double[])costs.Clone();
+
+        Array.Sort(copy); // ascending
+
+        double sum = 0.0;
+        for (int i = n - k; i < n; i++)
+            sum += copy[i];
+
+        return sum / k;
+    }
+
+    /// <summary>
+    /// Conditional Value at Risk (CVaR) at level p.
+    /// Example: p=0.95 → mean of losses above 95th percentile.
+    /// </summary>
+    public double CostCVaR(double p)
+    {
+        if (p <= 0 || p >= 1)
+            throw new ArgumentOutOfRangeException(nameof(p));
+
+        var costs = _loss.TotalCosts;
+        double threshold = CostAtPercentile(p);
+
+        double sum = 0;
+        int count = 0;
+
+        foreach (var c in costs)
+        {
+            if (c >= threshold)
+            {
+                sum += c;
+                count++;
+            }
+        }
+
+        return count == 0 ? threshold : sum / count;
     }
 
     // ── Summary report ────────────────────────────────────────────────────────

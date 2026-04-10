@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             x:Class="ReSilico.UI.Views.CorrelationMatrixView"
+             x:DataType="vm:CorrelationMatrixViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="32,24">
+
+        <!-- Title row -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
+            <TextBlock DockPanel.Dock="Left"
+                       Text="Correlation Matrix"
+                       FontSize="28" FontWeight="Bold"
+                       Foreground="#CDD6F4"
+                       VerticalAlignment="Center"/>
+            <Button DockPanel.Dock="Right"
+                    Content="Fix Matrix"
+                    Command="{Binding FixMatrixCommand}"
+                    Classes="primary"/>
+        </DockPanel>
+
+        <!-- Validation -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ValidationMessage}"
+                   Foreground="#F38BA8" FontSize="13"
+                   IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                   Margin="0,0,0,8"/>
+
+        <!-- Hint -->
+        <TextBlock Grid.Row="2"
+                   Text="Off-diagonal values are kept symmetric automatically. Diagonal is locked at 1."
+                   Foreground="#A6ADC8" FontSize="12"
+                   Margin="0,0,0,16"/>
+
+        <!-- Dynamic matrix built in code-behind -->
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto">
+            <Border Background="#1E1E2E" CornerRadius="10" Padding="16">
+                <Grid x:Name="PART_MatrixGrid"/>
+            </Border>
+        </ScrollViewer>
+
+    </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#89B4FA"/>
+            <Setter Property="Foreground" Value="#1E1E2E"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>

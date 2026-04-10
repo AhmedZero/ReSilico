@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ReSilico.Analysis\ReSilico.Analysis.csproj" />
     <ProjectReference Include="..\..\src\ReSilico.Core\ReSilico.Core.csproj" />
+    <ProjectReference Include="..\..\src\ReSilico.IO\ReSilico.IO.csproj" />
   </ItemGroup>
 
 </Project>

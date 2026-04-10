@@ -1,0 +1,182 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             x:Class="ReSilico.UI.Views.ResultsView"
+             x:DataType="vm:ResultsViewModel">
+
+    <Panel>
+
+        <!-- Empty state: shown when no results are loaded -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16"
+                    IsVisible="{Binding !HasResults}">
+            <TextBlock Text="No results loaded."
+                       FontSize="18" Foreground="#A6ADC8"
+                       HorizontalAlignment="Center"/>
+            <Button Content="Load from Folder"
+                    Command="{Binding LoadFromFolderCommand}"
+                    Classes="primary" HorizontalAlignment="Center"
+                    Padding="20,10" FontSize="15"/>
+            <TextBlock Text="{Binding FileStatusMessage}"
+                       Foreground="#F38BA8" FontSize="12"
+                       HorizontalAlignment="Center"
+                       IsVisible="{Binding FileStatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </StackPanel>
+
+    <ScrollViewer IsVisible="{Binding HasResults}">
+        <StackPanel Margin="24" Spacing="20">
+
+            <!-- Toolbar -->
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Content="Load from Folder"
+                        Command="{Binding LoadFromFolderCommand}"
+                        Background="#313244" Foreground="#CDD6F4"
+                        CornerRadius="6" Padding="12,6"/>
+                <Button Content="Save to Folder"
+                        Command="{Binding SaveToFolderCommand}"
+                        Background="#313244" Foreground="#CDD6F4"
+                        CornerRadius="6" Padding="12,6"/>
+                <TextBlock Text="{Binding FileStatusMessage}"
+                           Foreground="#A6E3A1" FontSize="12"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding FileStatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            </StackPanel>
+
+            <TextBlock Text="Simulation Results"
+                       FontSize="28" FontWeight="Bold"
+                       Foreground="#CDD6F4"/>
+
+            <!-- Summary statistics -->
+            <Border Background="#1E1E2E" CornerRadius="10" Padding="20">
+                <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Mean Loss" Classes="stat-label"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="{Binding MeanCost, StringFormat={}{0:N0} USD}"
+                               Classes="stat-value"/>
+
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Median Loss" Classes="stat-label"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                               Text="{Binding MedianCost, StringFormat={}{0:N0} USD}"
+                               Classes="stat-value"/>
+
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Coeff. of Variation" Classes="stat-label"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2"
+                               Text="{Binding CoeffOfVariation, StringFormat={}{0:P1}}"
+                               Classes="stat-value"/>
+
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Mean Repair Time" Classes="stat-label"/>
+                    <TextBlock Grid.Row="1" Grid.Column="3"
+                               Text="{Binding MeanTime, StringFormat={}{0:N1} days}"
+                               Classes="stat-value"/>
+                </Grid>
+            </Border>
+
+            <!-- Percentile strip -->
+            <Border Background="#1E1E2E" CornerRadius="10" Padding="20">
+                <Grid ColumnDefinitions="*,*,*,*">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="5th Percentile" Classes="stat-label"/>
+                        <TextBlock Text="{Binding P5Cost, StringFormat={}{0:N0} USD}" Classes="stat-value-sm"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Text="50th Percentile" Classes="stat-label"/>
+                        <TextBlock Text="{Binding MedianCost, StringFormat={}{0:N0} USD}" Classes="stat-value-sm"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="4">
+                        <TextBlock Text="Std Dev" Classes="stat-label"/>
+                        <TextBlock Text="{Binding StdDevCost, StringFormat={}{0:N0} USD}" Classes="stat-value-sm"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Spacing="4">
+                        <TextBlock Text="95th Percentile" Classes="stat-label"/>
+                        <TextBlock Text="{Binding P95Cost, StringFormat={}{0:N0} USD}" Classes="stat-value-sm"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Charts row -->
+            <Grid ColumnDefinitions="*,*" MinHeight="320">
+
+                <!-- Loss Histogram -->
+                <Border Grid.Column="0" Background="#1E1E2E" CornerRadius="10" Padding="16" Margin="0,0,8,0">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0" Text="Loss Histogram" Classes="chart-title"/>
+                        <lvc:CartesianChart Grid.Row="1"
+                                            Series="{Binding HistogramSeries}"
+                                            XAxes="{Binding HistXAxes}"
+                                            YAxes="{Binding HistYAxes}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Exceedance Curve -->
+                <Border Grid.Column="1" Background="#1E1E2E" CornerRadius="10" Padding="16" Margin="8,0,0,0">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Grid.Row="0" Text="Loss Exceedance Curve" Classes="chart-title"/>
+                        <lvc:CartesianChart Grid.Row="1"
+                                            Series="{Binding ExceedanceSeries}"
+                                            XAxes="{Binding ExcXAxes}"
+                                            YAxes="{Binding ExcYAxes}"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Component loss table -->
+            <Border Background="#1E1E2E" CornerRadius="10" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Mean Loss by Component"
+                               FontSize="16" FontWeight="SemiBold"
+                               Foreground="#CDD6F4"/>
+                    <DataGrid ItemsSource="{Binding ComponentLosses}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              Background="Transparent"
+                              RowBackground="#1E1E2E"
+                              MaxHeight="220">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Component ID"
+                                                Binding="{Binding ComponentId}"
+                                                Width="*"/>
+                            <DataGridTextColumn Header="Mean Loss (USD)"
+                                                Binding="{Binding MeanLossFormatted}"
+                                                Width="160"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+    </Panel>
+
+    <UserControl.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#89B4FA"/>
+            <Setter Property="Foreground" Value="#1E1E2E"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        <Style Selector="TextBlock.stat-label">
+            <Setter Property="Foreground" Value="#A6ADC8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style Selector="TextBlock.stat-value">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style Selector="TextBlock.stat-value-sm">
+            <Setter Property="Foreground" Value="#89B4FA"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="TextBlock.chart-title">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>

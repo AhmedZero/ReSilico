@@ -16,6 +16,12 @@
     <Project Path="src/ReSilico.Examples/ReSilico.Examples.csproj">
       <Platform Solution="*|x64" Project="x64" />
     </Project>
+    <Project Path="src/ReSilico.IO/ReSilico.IO.csproj">
+      <Platform Solution="Debug|x64" Project="x64" />
+    </Project>
+    <Project Path="src/ReSilico.UI/ReSilico.UI.csproj">
+      <Platform Solution="Debug|x64" Project="x64" />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ReSilico.Tests/ReSilico.Tests.csproj">

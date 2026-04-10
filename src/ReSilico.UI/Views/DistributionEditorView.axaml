@@ -1,0 +1,143 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             x:Class="ReSilico.UI.Views.DistributionEditorView"
+             x:DataType="vm:DistributionEditorViewModel">
+
+    <Grid ColumnDefinitions="260,*" Margin="24">
+
+        <!-- Left: demand list + add/remove -->
+        <Grid Grid.Column="0" RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,0,16,0">
+
+            <TextBlock Grid.Row="0" Text="EDP Demands"
+                       FontSize="18" FontWeight="SemiBold"
+                       Foreground="#CDD6F4" Margin="0,0,0,8"/>
+
+            <!-- File buttons -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,0,0,8">
+                <Button Content="Open CSV"
+                        Command="{Binding LoadFromFileCommand}"
+                        Classes="action"/>
+                <Button Content="Save CSV"
+                        Command="{Binding SaveToFileCommand}"
+                        Classes="action"/>
+            </StackPanel>
+
+            <ListBox Grid.Row="2"
+                     ItemsSource="{Binding Demands}"
+                     SelectedItem="{Binding SelectedDemand}"
+                     Background="#1E1E2E"
+                     CornerRadius="8"
+                     Padding="4">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding Name}" Foreground="#CDD6F4" FontSize="13"/>
+                            <TextBlock Text="{Binding DistributionType}" Foreground="#A6ADC8" FontSize="12"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                <Button Content="+ Add" Command="{Binding AddDemandCommand}" Classes="action"/>
+                <Button Content="Remove" Command="{Binding RemoveDemandCommand}" Classes="action"/>
+            </StackPanel>
+
+            <!-- Status -->
+            <TextBlock Grid.Row="4"
+                       Text="{Binding FileStatusMessage}"
+                       Foreground="#A6E3A1" FontSize="11"
+                       TextWrapping="Wrap" Margin="0,6,0,0"
+                       IsVisible="{Binding FileStatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </Grid>
+
+        <!-- Right: parameter editor + live PDF chart -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
+
+            <TextBlock Grid.Row="0" Text="Edit Parameters"
+                       FontSize="18" FontWeight="SemiBold"
+                       Foreground="#CDD6F4" Margin="0,0,0,16"/>
+
+            <!-- Parameter form -->
+            <Border Grid.Row="1"
+                    Background="#1E1E2E" CornerRadius="10"
+                    Padding="20" Margin="0,0,0,16">
+                <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" Classes="lbl"/>
+                    <TextBox  Grid.Row="0" Grid.Column="1" Text="{Binding DemandName}" Classes="inp"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Distribution" Classes="lbl"/>
+                    <ComboBox  Grid.Row="1" Grid.Column="1"
+                               ItemsSource="{Binding DistributionTypes}"
+                               SelectedItem="{Binding SelectedDistributionType}"
+                               Classes="inp"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Text="Parameter 1 (median / mean)"
+                               Classes="lbl"/>
+                    <TextBox  Grid.Row="2" Grid.Column="1"
+                               Text="{Binding Param1, StringFormat={}{0:G4}}"
+                               Classes="inp"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0"
+                               Text="Parameter 2 (β / σ)"
+                               Classes="lbl"/>
+                    <TextBox  Grid.Row="3" Grid.Column="1"
+                               Text="{Binding Param2, StringFormat={}{0:G4}}"
+                               Classes="inp"/>
+
+                    <!-- Validation message -->
+                    <TextBlock Grid.Row="4" Grid.ColumnSpan="2"
+                               Text="{Binding ValidationMessage}"
+                               Foreground="#F38BA8" FontSize="12"
+                               IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               Margin="0,4,0,0"/>
+
+                    <Button Grid.Row="5" Grid.Column="1"
+                            Content="Apply"
+                            Command="{Binding ApplyParametersCommand}"
+                            Classes="primary"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Left"/>
+                </Grid>
+            </Border>
+
+            <!-- Live PDF chart -->
+            <Border Grid.Row="2" Background="#1E1E2E" CornerRadius="10" Padding="12">
+                <lvc:CartesianChart Series="{Binding PdfSeries}"
+                                    XAxes="{Binding XAxes}"
+                                    YAxes="{Binding YAxes}"/>
+            </Border>
+        </Grid>
+    </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.lbl">
+            <Setter Property="Foreground" Value="#A6ADC8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style Selector="TextBox.inp, ComboBox.inp">
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Background" Value="#313244"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+        <Style Selector="Button.action">
+            <Setter Property="Background" Value="#313244"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,6"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#89B4FA"/>
+            <Setter Property="Foreground" Value="#1E1E2E"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>
