@@ -50,6 +50,29 @@ public sealed class SimulationPipeline
         _asset = asset;
     }
 
+    // ── Read-only introspection ───────────────────────────────────────────────
+
+    /// <summary>The asset this pipeline was constructed for.</summary>
+    public Asset Asset => _asset;
+
+    /// <summary>
+    /// The demand model wired via <see cref="WithDemand"/>,
+    /// or <see langword="null"/> if not yet configured.
+    /// </summary>
+    public DemandModel? DemandModel => _demandModel;
+
+    /// <summary>
+    /// The damage model wired via <see cref="WithDamage"/>,
+    /// or <see langword="null"/> if not yet configured.
+    /// </summary>
+    public DamageModel? DamageModel => _damageModel;
+
+    /// <summary>
+    /// The loss model wired via <see cref="WithLoss"/>,
+    /// or <see langword="null"/> if not yet configured.
+    /// </summary>
+    public LossModel? LossModel => _lossModel;
+
     // ── Fluent configuration ──────────────────────────────────────────────────
 
     /// <summary>Supply the demand model (EDP distributions and correlation).</summary>

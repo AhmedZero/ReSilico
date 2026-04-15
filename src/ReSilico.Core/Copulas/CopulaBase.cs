@@ -19,12 +19,7 @@ namespace ReSilico.Core.Copulas;
 public abstract class CopulaBase : ICopula
 {
     protected readonly double[,] _rho;
-    private volatile Matrix? _choleskyL;
-#if NET9_0_OR_GREATER
-    private readonly Lock _lock = new();
-#else
-    private readonly object _lock = new();
-#endif
+    private readonly Lazy<Matrix> _choleskyL;
 
     protected CopulaBase(double[,] correlationMatrix)
     {
@@ -33,9 +28,14 @@ public abstract class CopulaBase : ICopula
         if (correlationMatrix.GetLength(1) != n)
             throw new ArgumentException("Correlation matrix must be square.");
         _rho = correlationMatrix;
+        _choleskyL = new Lazy<Matrix>(() => ComputeCholesky(_rho));
+
     }
 
     public int Dimension => _rho.GetLength(0);
+
+    /// <summary>The Pearson correlation matrix Σ supplied at construction.</summary>
+    public double[,] CorrelationMatrix => _rho;
 
     /// <inheritdoc/>
     public abstract void ApplyCorrelation(double[,] uniformSamples);
@@ -46,16 +46,7 @@ public abstract class CopulaBase : ICopula
     /// Ensure the Cholesky factor is computed and return it.
     /// Uses a double-checked lock for thread-safe lazy initialisation.
     /// </summary>
-    protected Matrix EnsureCholesky()
-    {
-        if (_choleskyL is not null) return _choleskyL;
-        lock (_lock)
-        {
-            if (_choleskyL is not null) return _choleskyL;
-            _choleskyL = ComputeCholesky(_rho);
-        }
-        return _choleskyL;
-    }
+    protected Matrix EnsureCholesky() => _choleskyL.Value;
 
     // ─── Cholesky helpers (shared between all copula subclasses) ─────────────
 
@@ -96,5 +87,13 @@ public abstract class CopulaBase : ICopula
                 "Could not find a positive-definite approximation for the correlation matrix.");
 
         return chol2.L;
+    }
+    protected void ValidateInputDimensions(double[,] uniformSamples)
+    {
+        ArgumentNullException.ThrowIfNull(uniformSamples);
+        int inputDim = uniformSamples.GetLength(1);
+        if (inputDim != Dimension)
+            throw new ArgumentException(
+                $"Input dimension {inputDim} does not match copula dimension {Dimension}.");
     }
 }

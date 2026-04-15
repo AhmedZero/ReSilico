@@ -45,6 +45,17 @@ public sealed class LossModel
         foreach (var fn in functions) AddConsequence(componentId, fn);
     }
 
+    // ─── Introspection ───────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Read-only view of all registered consequence functions, keyed by component ID.
+    /// Useful for sensitivity analysis and result inspection.
+    /// </summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<ConsequenceFunction>> Consequences =>
+        _consequences.ToDictionary(
+            kv => kv.Key,
+            kv => (IReadOnlyList<ConsequenceFunction>)kv.Value.AsReadOnly());
+
     // ─── Loss calculation ─────────────────────────────────────────────────────
 
     /// <summary>

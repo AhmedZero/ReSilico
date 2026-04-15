@@ -115,9 +115,7 @@ public sealed class TCopula : CopulaBase
         // Draw count chi-squared(ν) samples for the mixing variables.
         // Each invocation of ApplyCorrelation uses a distinct seed to avoid
         // producing the same chi-squared sequence across calls.
-        int chiSqSeed = _seed > 0
-            ? _seed + System.Threading.Interlocked.Increment(ref _callCount)
-            : -1;
+        int chiSqSeed = GetNextSeed();
         double[] chiSq = SampleChiSquared(count, chiSqSeed);
 
         double[] zBuf = ArrayPool<double>.Shared.Rent(n);
@@ -149,7 +147,11 @@ public sealed class TCopula : CopulaBase
             ArrayPool<double>.Shared.Return(zBuf);
         }
     }
-
+    private int GetNextSeed()
+    {
+        int current = System.Threading.Interlocked.Increment(ref _callCount);
+        return _seed > 0 ? _seed + current : -1;
+    }
     // ─── Chi-squared sampler ─────────────────────────────────────────────────
 
     /// <summary>

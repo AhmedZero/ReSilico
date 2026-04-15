@@ -166,6 +166,18 @@ public sealed class DemandModel(ISampler? sampler = null)
     public int SampleCount => _registry?.SampleCount ?? 0;
     public IReadOnlyList<EdpDistributionSpec> Specs => _specs;
 
+    /// <summary>
+    /// The Pearson correlation matrix set via <see cref="SetCorrelation"/>, or
+    /// <see langword="null"/> if none was set (or if a copula was used instead).
+    /// </summary>
+    public double[,]? CorrelationMatrix => _correlationMatrix;
+
+    /// <summary>
+    /// The explicit copula set via <see cref="SetCopula"/>, or
+    /// <see langword="null"/> if none was set (or if a matrix was used instead).
+    /// </summary>
+    public ICopula? ActiveCopula => _copula;
+
     // ─── Private: MLE fitting ─────────────────────────────────────────────────
 
     private static (double theta1, double theta2) FitMarginal(double[] data, EdpDistributionKind kind)
