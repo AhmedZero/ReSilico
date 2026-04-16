@@ -4,14 +4,13 @@
              x:Class="ReSilico.UI.Views.CorrelationMatrixView"
              x:DataType="vm:CorrelationMatrixViewModel">
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="32,24">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="32,24">
 
         <!-- Title row -->
         <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,16">
             <TextBlock DockPanel.Dock="Left"
                        Text="Correlation Matrix"
-                       FontSize="28" FontWeight="Bold"
-                       Foreground="#CDD6F4"
+                       Classes="page-title"
                        VerticalAlignment="Center"/>
             <Button DockPanel.Dock="Right"
                     Content="Fix Matrix"
@@ -19,22 +18,31 @@
                     Classes="primary"/>
         </DockPanel>
 
+        <Border Grid.Row="1" Classes="card" Margin="0,0,0,16">
+            <Grid ColumnDefinitions="160,240,180,160" ColumnSpacing="12">
+                <TextBlock Grid.Column="0" Text="Copula" Classes="label"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Copulas}" SelectedItem="{Binding SelectedCopula}"/>
+                <TextBlock Grid.Column="2" Text="Degrees of freedom" Classes="label" IsVisible="{Binding IsTCopula}"/>
+                <NumericUpDown Grid.Column="3" Value="{Binding DegreesOfFreedom}" Minimum="2.1" Maximum="100" Increment="1" IsVisible="{Binding IsTCopula}"/>
+            </Grid>
+        </Border>
+
         <!-- Validation -->
-        <TextBlock Grid.Row="1"
+        <TextBlock Grid.Row="2"
                    Text="{Binding ValidationMessage}"
-                   Foreground="#F38BA8" FontSize="13"
+                   Classes="error"
                    IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                    Margin="0,0,0,8"/>
 
         <!-- Hint -->
-        <TextBlock Grid.Row="2"
+        <TextBlock Grid.Row="3"
                    Text="Off-diagonal values are kept symmetric automatically. Diagonal is locked at 1."
                    Foreground="#A6ADC8" FontSize="12"
                    Margin="0,0,0,16"/>
 
         <!-- Dynamic matrix built in code-behind -->
-        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto">
-            <Border Background="#1E1E2E" CornerRadius="10" Padding="16">
+        <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Auto">
+            <Border Classes="card">
                 <Grid x:Name="PART_MatrixGrid"/>
             </Border>
         </ScrollViewer>

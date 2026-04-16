@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ReSilico.UI.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,6 +31,16 @@ public partial class CorrelationMatrixViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _validationMessage = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsTCopula))]
+    private string _selectedCopula = "Gaussian";
+
+    [ObservableProperty]
+    private double _degreesOfFreedom = 6.0;
+
+    public string[] Copulas { get; } = ["Gaussian", "t-Copula"];
+    public bool IsTCopula => SelectedCopula == "t-Copula";
 
     public ObservableCollection<string> DemandNames { get; } = [];
     public ObservableCollection<ObservableCollection<CorrelationCellViewModel>> Rows { get; } = [];
@@ -127,6 +138,14 @@ public partial class CorrelationMatrixViewModel : ViewModelBase
             for (int c = 0; c < n; c++)
                 m[r, c] = Rows[r][c].Value;
         return m;
+    }
+
+    public SimulationConfiguration ApplyTo(SimulationConfiguration config)
+    {
+        config.CorrelationMatrix = ExtractMatrix();
+        config.CopulaType = SelectedCopula;
+        config.DegreesOfFreedom = DegreesOfFreedom;
+        return config;
     }
 
     private void ApplyMatrix(double[,] m)

@@ -29,6 +29,7 @@ public partial class ResultsViewModel : ViewModelBase
     [ObservableProperty] private double _coeffOfVariation;
     [ObservableProperty] private double _p5Cost;
     [ObservableProperty] private double _p95Cost;
+    [ObservableProperty] private double _cvar95Cost;
     [ObservableProperty] private double _meanTime;
 
     [ObservableProperty] private bool _hasResults;
@@ -67,6 +68,7 @@ public partial class ResultsViewModel : ViewModelBase
         CoeffOfVariation = result.CoeffOfVariationCost;
         P5Cost         = result.CostAtPercentile(0.05);
         P95Cost        = result.CostAtPercentile(0.95);
+        Cvar95Cost     = result.CostCVaR(0.95);
         MeanTime       = result.MeanTime;
         HasResults     = true;
 
@@ -91,6 +93,7 @@ public partial class ResultsViewModel : ViewModelBase
         CoeffOfVariation = MeanCost > 0 ? StdDevCost / MeanCost : 0;
         P5Cost           = ComputePercentile(costs, 0.05);
         P95Cost          = ComputePercentile(costs, 0.95);
+        Cvar95Cost       = ComputeCVaR(costs, 0.95);
         MeanTime         = ComputeMean(times);
         HasResults       = true;
 
@@ -219,6 +222,14 @@ public partial class ResultsViewModel : ViewModelBase
         int lo = (int)idx;
         int hi = Math.Min(lo + 1, sorted.Length - 1);
         return sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
+    }
+
+    private static double ComputeCVaR(double[] arr, double p)
+    {
+        if (arr.Length == 0) return 0;
+        double threshold = ComputePercentile(arr, p);
+        var tail = arr.Where(x => x >= threshold).ToArray();
+        return tail.Length == 0 ? threshold : tail.Average();
     }
 
     private static (double[] edges, int[] counts) ComputeHistogram(double[] costs, int bins)

@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             x:Class="ReSilico.UI.Views.SensitivityAnalysisView"
+             x:DataType="vm:SensitivityAnalysisViewModel">
+    <ScrollViewer>
+        <StackPanel Margin="32,28" Spacing="18">
+            <TextBlock Text="Sensitivity Analysis" Classes="page-title"/>
+            <Border Classes="card">
+                <DockPanel LastChildFill="True">
+                    <Button DockPanel.Dock="Right"
+                            Content="Run Sensitivity"
+                            Command="{Binding RunSensitivityCommand}"
+                            Classes="primary"
+                            MinWidth="160"
+                            Margin="16,0,0,0"/>
+                    <WrapPanel Orientation="Horizontal" ItemWidth="250" ItemHeight="76">
+                        <StackPanel Margin="0,0,14,10" Spacing="6">
+                            <TextBlock Text="Method" Classes="label"/>
+                            <ComboBox ItemsSource="{Binding Methods}" SelectedItem="{Binding SelectedMethod}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,14,10" Spacing="6">
+                            <TextBlock Text="Target metric" Classes="label"/>
+                            <ComboBox ItemsSource="{Binding TargetMetrics}" SelectedItem="{Binding SelectedTargetMetric}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,14,10" Spacing="6">
+                            <TextBlock Text="Sample size" Classes="label"/>
+                            <NumericUpDown Value="{Binding SampleSize}" Minimum="100" Maximum="100000" Increment="1000"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,14,10" Spacing="6">
+                            <TextBlock Text="Perturbation" Classes="label"/>
+                            <NumericUpDown Value="{Binding PerturbationFactor}" Minimum="0.001" Maximum="0.5" Increment="0.01"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,14,10" Spacing="6">
+                            <TextBlock Text="Quantile" Classes="label"/>
+                            <NumericUpDown Value="{Binding TargetQuantile}" Minimum="0.5" Maximum="0.999" Increment="0.01"/>
+                        </StackPanel>
+                    </WrapPanel>
+                </DockPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="#A6ADC8"/>
+
+            <Grid ColumnDefinitions="1.2*,*" MinHeight="500" IsVisible="{Binding HasResults}">
+                <Border Grid.Column="0" Classes="card" Margin="0,0,10,0">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Text="Tornado Chart" Classes="section-title" Margin="0,0,0,10"/>
+                        <lvc:CartesianChart Grid.Row="1" Series="{Binding TornadoSeries}"
+                                            XAxes="{Binding TornadoXAxes}" YAxes="{Binding TornadoYAxes}"/>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" Classes="card" Margin="10,0,0,0">
+                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Text="Ranked Parameters" Classes="section-title" Margin="0,0,0,10"/>
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False" IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Parameter" Binding="{Binding Parameter}" Width="2*"/>
+                                <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="*"/>
+                                <DataGridTextColumn Header="Sensitivity" Binding="{Binding SensitivityFormatted}" Width="120"/>
+                                <DataGridTextColumn Header="Relative" Binding="{Binding RelativeFormatted}" Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

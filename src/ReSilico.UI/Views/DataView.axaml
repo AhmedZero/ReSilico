@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             x:Class="ReSilico.UI.Views.DataView"
+             x:DataType="vm:DataViewModel">
+    <StackPanel Margin="28" Spacing="18">
+        <TextBlock Text="CSV Data" Classes="page-title"/>
+        <Border Classes="card">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Content="Load from Folder" Command="{Binding LoadFromFolderCommand}" Classes="primary"/>
+                <Button Content="Save to Folder" Command="{Binding SaveToFolderCommand}" Classes="secondary"/>
+                <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Foreground="#A6ADC8"/>
+            </StackPanel>
+        </Border>
+        <Border Classes="card">
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Text="Parsed Data Preview" Classes="section-title" Margin="0,0,0,12"/>
+                <DataGrid Grid.Row="1" ItemsSource="{Binding PreviewRows}" AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="170"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="150"/>
+                        <DataGridTextColumn Header="Value 1" Binding="{Binding Value1}" Width="140"/>
+                        <DataGridTextColumn Header="Value 2" Binding="{Binding Value2}" Width="140"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>

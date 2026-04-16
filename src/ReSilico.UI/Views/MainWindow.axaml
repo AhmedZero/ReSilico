@@ -5,37 +5,38 @@
         x:DataType="vm:MainViewModel"
         Title="{Binding Title}"
         Width="1280" Height="800"
-        MinWidth="900" MinHeight="600">
+        MinWidth="1000" MinHeight="650"
+        FontFamily="Inter, Segoe UI">
 
-    <Grid ColumnDefinitions="200,*">
+    <Grid ColumnDefinitions="240,*" Background="#11161B">
 
         <!-- Sidebar Navigation -->
         <Border Grid.Column="0"
-                Background="#1E1E2E"
+                Background="#151B21"
                 Padding="0,16">
-            <StackPanel Spacing="4" Margin="8,0">
+            <Grid RowDefinitions="Auto,*" Margin="14,0">
 
                 <TextBlock Text="ReSilico"
+                           Grid.Row="0"
                            FontSize="20" FontWeight="Bold"
-                           Foreground="#CDD6F4"
-                           Margin="8,0,0,24"/>
+                           Foreground="#E5EDF3"
+                           Margin="2,0,0,26"/>
 
-                <Button Content="Dashboard"
-                        Command="{Binding GoToDashboardCommand}"
-                        Classes="nav"/>
-                <Button Content="Distributions"
-                        Command="{Binding GoToDistributionEditorCommand}"
-                        Classes="nav"/>
-                <Button Content="Correlation Matrix"
-                        Command="{Binding GoToCorrelationMatrixCommand}"
-                        Classes="nav"/>
-                <Button Content="Run Simulation"
-                        Command="{Binding GoToSimulationCommand}"
-                        Classes="nav"/>
-                <Button Content="Results"
-                        Command="{Binding GoToResultsCommand}"
-                        Classes="nav"/>
-            </StackPanel>
+                <ItemsControl Grid.Row="1"
+                              ItemsSource="{Binding NavigationItems}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding NavigateCommand}"
+                                    Classes.navItem="{Binding !IsSelected}"
+                                    Classes.navItemSelected="{Binding IsSelected}">
+                                <TextBlock Text="{Binding Label}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"/>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
         </Border>
 
         <!-- Content Area (ViewLocator renders the active page) -->
@@ -45,17 +46,32 @@
     </Grid>
 
     <Window.Styles>
-        <Style Selector="Button.nav">
+        <Style Selector="Button.navItem, Button.navItemSelected">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#CDD6F4"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
-        <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#313244"/>
+        <Style Selector="Button.navItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#DCE6EB"/>
+        </Style>
+        <Style Selector="Button.navItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#202A31"/>
+        </Style>
+        <Style Selector="Button.navItem:pointerover">
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        <Style Selector="Button.navItemSelected">
+            <Setter Property="Background" Value="#263D44"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+        <Style Selector="Button.navItemSelected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#263D44"/>
         </Style>
     </Window.Styles>
 </Window>

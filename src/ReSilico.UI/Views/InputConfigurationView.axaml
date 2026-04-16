@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             x:Class="ReSilico.UI.Views.InputConfigurationView"
+             x:DataType="vm:InputConfigurationViewModel">
+    <ScrollViewer>
+        <StackPanel Margin="32,28" Spacing="18" MaxWidth="1320">
+            <TextBlock Text="Input Configuration" Classes="page-title"/>
+            <TextBlock Text="{Binding ValidationMessage}" Classes="error"
+                       IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+            <Border Classes="card">
+                <Grid RowDefinitions="Auto,*">
+                   <Grid Grid.Row="0" Margin="0,0,0,12" ColumnDefinitions="*,Auto">
+    
+                        <TextBlock Grid.Column="0"
+                                   Text="Demand Model"
+                                   Classes="section-title"
+                                   VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    HorizontalAlignment="Right">
+                            <Button Content="Add EDP"
+                                    Command="{Binding AddDemandCommand}"
+                                    Classes="secondary"/>
+                            <Button Content="Remove Last"
+                                    Command="{Binding RemoveDemandCommand}"
+                                    Classes="secondary"/>
+                        </StackPanel>
+
+                    </Grid>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Demands}" AutoGenerateColumns="False" MaxHeight="190">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="EDP" Binding="{Binding Name}" Width="2*"/>
+                            <DataGridTemplateColumn Header="Distribution" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DistributionType}"
+                                                   VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding DistributionTypes}"
+                                                  SelectedItem="{Binding DistributionType}"
+                                                  HorizontalAlignment="Stretch"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Median / Mean" Binding="{Binding Param1, StringFormat={}{0:G5}}" Width="*"/>
+                            <DataGridTextColumn Header="Beta / StdDev" Binding="{Binding Param2, StringFormat={}{0:G4}}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border Classes="card">
+                <Grid RowDefinitions="Auto,*">
+                     <Grid Grid.Row="0" Margin="0,0,0,12" ColumnDefinitions="*,Auto">
+    
+                        <TextBlock Grid.Column="0"
+                                   Text="Fragility Model"
+                                   Classes="section-title"
+                                   VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="8"
+                                    HorizontalAlignment="Right">
+                            <Button Content="Add State"
+                                    Command="{Binding AddFragilityStateCommand}"
+                                    Classes="secondary"/>
+                            <Button Content="Remove Last"
+                                    Command="{Binding RemoveFragilityStateCommand}"
+                                    Classes="secondary"/>
+                        </StackPanel>
+
+                    </Grid>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Fragilities}" AutoGenerateColumns="False" MaxHeight="220">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Component" Binding="{Binding ComponentId}" Width="*"/>
+                            <DataGridTextColumn Header="EDP" Binding="{Binding EdpName}" Width="*"/>
+                            <DataGridTextColumn Header="Damage State" Binding="{Binding DamageState}" Width="150"/>
+                            <DataGridTextColumn Header="Threshold Median" Binding="{Binding Median, StringFormat={}{0:G5}}" Width="170"/>
+                            <DataGridTextColumn Header="Beta" Binding="{Binding Beta, StringFormat={}{0:G4}}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border Classes="card">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="Loss Model" Classes="section-title" Margin="0,0,0,12"/>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Losses}" AutoGenerateColumns="False" MaxHeight="220">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Component" Binding="{Binding ComponentId}" Width="*"/>
+                            <DataGridTextColumn Header="Damage State" Binding="{Binding DamageState}" Width="160"/>
+                            <DataGridTextColumn Header="Median Cost" Binding="{Binding MedianCost, StringFormat={}{0:N0}}" Width="180"/>
+                            <DataGridTextColumn Header="Beta" Binding="{Binding Beta, StringFormat={}{0:G4}}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

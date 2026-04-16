@@ -22,6 +22,8 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private bool _hasResults;
 
+    public ResultsViewModel Results => _results;
+
     public DashboardViewModel(
         INavigationService navigation,
         ISimulationService simulationService,
@@ -38,7 +40,7 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OpenDistributionEditor() => _navigation.NavigateTo<DistributionEditorViewModel>();
+    private void OpenInputConfiguration() => _navigation.NavigateTo<InputConfigurationViewModel>();
 
     [RelayCommand]
     private void OpenCorrelationMatrix() => _navigation.NavigateTo<CorrelationMatrixViewModel>();

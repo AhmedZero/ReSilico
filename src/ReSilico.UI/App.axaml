@@ -1,12 +1,138 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ReSilico.UI"
+             xmlns:suki="clr-namespace:SukiUI;assembly=SukiUI"
              x:Class="ReSilico.UI.App"
              RequestedThemeVariant="Dark">
 
     <Application.Styles>
         <FluentTheme />
+        <suki:SukiTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="BorderBrush" Value="#34414A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BoxShadow" Value="0 10 26 0 #52000000"/>
+        </Style>
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="Foreground" Value="#E5EDF3"/>
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="Foreground" Value="#E5EDF3"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="Foreground" Value="#AEBAC4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.error">
+            <Setter Property="Foreground" Value="#F47C7C"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#6BD5C9"/>
+            <Setter Property="Foreground" Value="#071113"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="14,8"/>
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="#2B343D"/>
+            <Setter Property="Foreground" Value="#E5EDF3"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        <Style Selector="TextBox, ComboBox, NumericUpDown">
+            <Setter Property="Background" Value="#20272E"/>
+            <Setter Property="Foreground" Value="#F2F6F8"/>
+            <Setter Property="BorderBrush" Value="#34414A"/>
+            <Setter Property="CornerRadius" Value="6"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+            <Setter Property="BorderBrush" Value="#34414A"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#2E3942"/>
+            <Setter Property="RowBackground" Value="#171D23"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#B8C5CD"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+        <Style Selector="DataGridRow">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+        </Style>
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+        </Style>
+        <Style Selector="DataGridRow:editing">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+        </Style>
+        <Style Selector="DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="MinHeight" Value="34"/>
+        </Style>
+        <Style Selector="DataGridCell:current">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="BorderBrush" Value="#6BD5C9"/>
+        </Style>
+        <Style Selector="DataGridCell:selected">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+            <Setter Property="BorderBrush" Value="#6BD5C9"/>
+        </Style>
+        <Style Selector="DataGridCell:focus-within">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="BorderBrush" Value="#6BD5C9"/>
+        </Style>
+        <Style Selector="DataGridRow:selected DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+        </Style>
+        <Style Selector="DataGridRow:editing DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+        </Style>
+        <Style Selector="DataGridCell:current /template/ ContentPresenter">
+            <Setter Property="Background" Value="#171D23"/>
+        </Style>
+        <Style Selector="DataGridCell:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#171D23"/>
+        </Style>
+        <Style Selector="DataGridRow:selected DataGridCell /template/ ContentPresenter">
+            <Setter Property="Background" Value="#171D23"/>
+        </Style>
+        <Style Selector="DataGridCell TextBox">
+            <Setter Property="Background" Value="#171D23"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#6BD5C9"/>
+            <Setter Property="SelectionBrush" Value="#26343B"/>
+            <Setter Property="SelectionForegroundBrush" Value="#FFFFFF"/>
+            <Setter Property="CaretBrush" Value="#6BD5C9"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="DataGridCell TextBlock">
+            <Setter Property="Foreground" Value="#E8EEF2"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
     </Application.Styles>
 
     <Application.DataTemplates>

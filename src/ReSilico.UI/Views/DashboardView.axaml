@@ -7,9 +7,7 @@
     <ScrollViewer>
         <StackPanel Margin="32" Spacing="24">
 
-            <TextBlock Text="Dashboard"
-                       FontSize="28" FontWeight="Bold"
-                       Foreground="#CDD6F4"/>
+            <TextBlock Text="Dashboard" Classes="page-title"/>
 
             <TextBlock Text="{Binding StatusMessage}"
                        FontSize="14" Foreground="#A6ADC8"/>
@@ -21,9 +19,35 @@
                         Classes="primary"/>
                 <Button Content="Save Assessment"
                         Command="{Binding SaveAssessmentCommand}"
-                        Background="#313244" Foreground="#CDD6F4"
-                        CornerRadius="6" Padding="12,8" FontWeight="SemiBold"/>
+                        Classes="secondary"/>
             </StackPanel>
+
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="14">
+                <Border Grid.Column="0" Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Mean Loss" Classes="stat-label"/>
+                        <TextBlock Text="{Binding Results.MeanCost, StringFormat={}{0:N0} USD}" Classes="stat-value"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Median" Classes="stat-label"/>
+                        <TextBlock Text="{Binding Results.MedianCost, StringFormat={}{0:N0} USD}" Classes="stat-value"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="CoV" Classes="stat-label"/>
+                        <TextBlock Text="{Binding Results.CoeffOfVariation, StringFormat={}{0:P1}}" Classes="stat-value"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="CVaR 95%" Classes="stat-label"/>
+                        <TextBlock Text="{Binding Results.Cvar95Cost, StringFormat={}{0:N0} USD}" Classes="stat-value"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
 
             <!-- Quick-action cards -->
             <WrapPanel Orientation="Horizontal" ItemWidth="220">
@@ -33,7 +57,7 @@
                         <TextBlock Text="Demand Model" Classes="card-title"/>
                         <TextBlock Text="Define EDP distributions and parameters." Classes="card-body" TextWrapping="Wrap"/>
                         <Button Content="Open Editor"
-                                Command="{Binding OpenDistributionEditorCommand}"
+                                Command="{Binding OpenInputConfigurationCommand}"
                                 Classes="primary"/>
                     </StackPanel>
                 </Border>
@@ -74,16 +98,19 @@
     </ScrollViewer>
 
     <UserControl.Styles>
-        <Style Selector="Border.card">
-            <Setter Property="Background" Value="#1E1E2E"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Width" Value="220"/>
-        </Style>
         <Style Selector="TextBlock.card-title">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+        <Style Selector="TextBlock.stat-label">
+            <Setter Property="Foreground" Value="#AEBAC4"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="TextBlock.stat-value">
+            <Setter Property="Foreground" Value="#6BD5C9"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
         </Style>
         <Style Selector="TextBlock.card-body">
             <Setter Property="FontSize" Value="13"/>

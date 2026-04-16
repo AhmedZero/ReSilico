@@ -37,19 +37,28 @@ public partial class App : Application
             var navigation = new NavigationService();
 
             // ── ViewModels ────────────────────────────────────────────────────
-            var resultsVm    = new ResultsViewModel(fileDialogs);
-            var distEditorVm = new DistributionEditorViewModel(fileDialogs);
-            var corrMatrixVm = new CorrelationMatrixViewModel();
-            var simVm        = new SimulationViewModel(simulationService, navigation, resultsVm);
+            var resultsVm     = new ResultsViewModel(fileDialogs);
+            var inputVm       = new InputConfigurationViewModel();
+            var distEditorVm  = new DistributionEditorViewModel(fileDialogs);
+            var corrMatrixVm  = new CorrelationMatrixViewModel();
+            var settingsVm    = new SimulationSettingsViewModel();
+            var simVm         = new SimulationViewModel(
+                simulationService, navigation, resultsVm, inputVm, corrMatrixVm, settingsVm);
+            var sensitivityVm = new SensitivityAnalysisViewModel(inputVm, corrMatrixVm, settingsVm);
+            var dataVm        = new DataViewModel(fileDialogs, inputVm, resultsVm);
             var dashVm       = new DashboardViewModel(
                 navigation, simulationService, fileDialogs, distEditorVm, resultsVm);
 
             // Register so NavigateTo<T>() works from any VM
             navigation.Register(dashVm);
+            navigation.Register(inputVm);
             navigation.Register(distEditorVm);
             navigation.Register(corrMatrixVm);
+            navigation.Register(settingsVm);
             navigation.Register(simVm);
             navigation.Register(resultsVm);
+            navigation.Register(sensitivityVm);
+            navigation.Register(dataVm);
 
             var mainVm = new MainViewModel(navigation);
 

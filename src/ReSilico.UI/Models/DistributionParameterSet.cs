@@ -4,6 +4,8 @@ namespace ReSilico.UI.Models;
 
 public class DistributionParameterSet
 {
+    public string[] DistributionTypes { get; } = ["Lognormal", "Normal"];
+
     public string Name { get; set; } = string.Empty;
     public string DistributionType { get; set; } = "Lognormal";
     public double Param1 { get; set; } = 0.5;   // mean / mu

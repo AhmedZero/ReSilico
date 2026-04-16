@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using ReSilico.UI.Models;
 using ReSilico.UI.Services;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,21 +15,12 @@ public partial class SimulationViewModel : ViewModelBase
     private readonly ISimulationService _simulationService;
     private readonly INavigationService _navigation;
     private readonly ResultsViewModel _resultsVm;
+    private readonly InputConfigurationViewModel _inputVm;
+    private readonly CorrelationMatrixViewModel _correlationVm;
+    private readonly SimulationSettingsViewModel _settingsVm;
     private CancellationTokenSource? _cts;
 
-    // ── Configuration ────────────────────────────────────────────────────────
-    [ObservableProperty]
-    private int _numberOfRealizations = 10_000;
-
-    [ObservableProperty]
-    private int _randomSeed = 42;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLhs))]
-    private string _selectedSamplingMethod = "LatinHypercube";
-
-    public string[] SamplingMethods { get; } = ["LatinHypercube", "MonteCarlo"];
-    public bool IsLhs => SelectedSamplingMethod == "LatinHypercube";
+    public ObservableCollection<string> LogLines { get; } = [];
 
     // ── Progress / status ────────────────────────────────────────────────────
     [ObservableProperty]
@@ -42,11 +35,17 @@ public partial class SimulationViewModel : ViewModelBase
     public SimulationViewModel(
         ISimulationService simulationService,
         INavigationService navigation,
-        ResultsViewModel resultsVm)
+        ResultsViewModel resultsVm,
+        InputConfigurationViewModel inputVm,
+        CorrelationMatrixViewModel correlationVm,
+        SimulationSettingsViewModel settingsVm)
     {
         _simulationService = simulationService;
         _navigation = navigation;
         _resultsVm = resultsVm;
+        _inputVm = inputVm;
+        _correlationVm = correlationVm;
+        _settingsVm = settingsVm;
         Title = "Run Simulation";
 
         _simulationService.ProgressChanged += (_, p) =>
@@ -61,23 +60,37 @@ public partial class SimulationViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanRun))]
     private async Task RunSimulationAsync()
     {
+        if (!_inputVm.Validate() || !_settingsVm.Validate())
+        {
+            StatusMessage = string.IsNullOrWhiteSpace(_inputVm.ValidationMessage)
+                ? _settingsVm.ValidationMessage
+                : _inputVm.ValidationMessage;
+            return;
+        }
+
         _cts = new CancellationTokenSource();
         CanRun = false;
+        RunSimulationCommand.NotifyCanExecuteChanged();
         IsBusy = true;
         Progress = 0;
-        StatusMessage = "Starting simulation…";
+        LogLines.Clear();
+        StatusMessage = "Starting simulation...";
 
         try
         {
-            var config = new SimulationConfiguration
-            {
-                NumberOfRealizations = NumberOfRealizations,
-                RandomSeed = RandomSeed,
-                SamplingMethod = SelectedSamplingMethod
-            };
+            var config = new SimulationConfiguration();
+            _inputVm.ApplyTo(config);
+            _correlationVm.ApplyTo(config);
+            _settingsVm.ApplyTo(config);
+
+            LogLines.Add($"Samples: {config.NumberOfRealizations:N0}");
+            LogLines.Add($"Sampler: {(config.UseAdaptive ? "Adaptive Monte Carlo" : config.SamplingMethod)}");
+            LogLines.Add($"Copula: {config.CopulaType}");
+            LogLines.Add($"EDPs: {config.Demands.Count}, components: {config.Fragilities.Select(f => f.ComponentId).Distinct().Count()}");
 
             var result = await _simulationService.RunAsync(config, _cts.Token);
             StatusMessage = $"Done. Mean total loss = {result.MeanCost:N0} USD";
+            LogLines.Add(StatusMessage);
 
             _resultsVm.LoadResult(result);
             _navigation.NavigateTo(_resultsVm);
@@ -93,6 +106,7 @@ public partial class SimulationViewModel : ViewModelBase
         finally
         {
             CanRun = true;
+            RunSimulationCommand.NotifyCanExecuteChanged();
             IsBusy = false;
         }
     }

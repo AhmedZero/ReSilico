@@ -64,9 +64,9 @@
                                Text="{Binding CoeffOfVariation, StringFormat={}{0:P1}}"
                                Classes="stat-value"/>
 
-                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Mean Repair Time" Classes="stat-label"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="CVaR 95%" Classes="stat-label"/>
                     <TextBlock Grid.Row="1" Grid.Column="3"
-                               Text="{Binding MeanTime, StringFormat={}{0:N1} days}"
+                               Text="{Binding Cvar95Cost, StringFormat={}{0:N0} USD}"
                                Classes="stat-value"/>
                 </Grid>
             </Border>

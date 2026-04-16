@@ -21,6 +21,12 @@ public class NavigationService : INavigationService
             NavigateTo(vm);
     }
 
+    public void NavigateTo(Type viewModelType)
+    {
+        if (_registry.TryGetValue(viewModelType, out var vm))
+            NavigateTo(vm);
+    }
+
     public void NavigateTo(ViewModelBase viewModel)
     {
         _currentView = viewModel;

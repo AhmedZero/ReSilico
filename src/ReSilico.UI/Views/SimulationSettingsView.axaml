@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ReSilico.UI.ViewModels"
+             x:Class="ReSilico.UI.Views.SimulationSettingsView"
+             x:DataType="vm:SimulationSettingsViewModel">
+    <ScrollViewer>
+        <StackPanel Margin="28" Spacing="18" MaxWidth="760">
+            <TextBlock Text="Simulation Settings" Classes="page-title"/>
+            <Border Classes="card">
+                <Grid ColumnDefinitions="220,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="12">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Sample size" Classes="label"/>
+                    <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding NumberOfRealizations}" Minimum="10" Maximum="1000000" Increment="1000"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Seed" Classes="label"/>
+                    <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding RandomSeed}" Minimum="-1" Maximum="9999999"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Sampler" Classes="label"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding SamplingMethods}" SelectedItem="{Binding SelectedSamplingMethod}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Initial samples" Classes="label" IsVisible="{Binding IsAdaptive}"/>
+                    <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding InitialSamples}" Minimum="10" Maximum="1000000" Increment="1000" IsVisible="{Binding IsAdaptive}"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Batch size" Classes="label" IsVisible="{Binding IsAdaptive}"/>
+                    <NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding BatchSize}" Minimum="1" Maximum="100000" Increment="500" IsVisible="{Binding IsAdaptive}"/>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Mean tolerance" Classes="label" IsVisible="{Binding IsAdaptive}"/>
+                    <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding ToleranceMean}" Minimum="0.001" Maximum="1" Increment="0.005" IsVisible="{Binding IsAdaptive}"/>
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Tail tolerance" Classes="label" IsVisible="{Binding IsAdaptive}"/>
+                    <NumericUpDown Grid.Row="6" Grid.Column="1" Value="{Binding ToleranceTail}" Minimum="0.001" Maximum="1" Increment="0.005" IsVisible="{Binding IsAdaptive}"/>
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Tail quantile" Classes="label" IsVisible="{Binding IsAdaptive}"/>
+                    <NumericUpDown Grid.Row="7" Grid.Column="1" Value="{Binding TargetQuantile}" Minimum="0.5" Maximum="0.999" Increment="0.01" IsVisible="{Binding IsAdaptive}"/>
+                </Grid>
+            </Border>
+            <TextBlock Text="{Binding ValidationMessage}" Classes="error"
+                       IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
